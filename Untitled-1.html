@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>For Pauleen</title>
+<style>
+body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    overflow:hidden;
+    background:#6a0dad; /* Purple background */
+    text-align:center;
+}
+
+/* Tulips behind everything */
+.tulip {
+    position:absolute;
+    font-size:24px;
+    cursor:pointer;
+    opacity:0.7;
+    z-index:0; /* Behind cards */
+    transition: transform 0.5s ease;
+}
+
+/* Highlight clickable tulips */
+.tulip.clickable {
+    opacity: 1;
+    font-size: 30px;
+    text-shadow: 0 0 10px #ffb3ff, 0 0 20px #d291ff;
+    animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Envelope */
+.envelope {
+    width:300px;
+    height:200px;
+    background:#7b2cbf;
+    border-radius:12px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    cursor:pointer;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    z-index:2;
+}
+
+/* Card pages */
+.card {
+    width:360px;
+    background:#8e44ad;
+    padding:40px;
+    border-radius:20px;
+    color:white;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    box-shadow:0 15px 35px rgba(0,0,0,0.3);
+    z-index:2; /* above tulips */
+}
+
+button {
+    padding:10px 20px;
+    margin:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+#yesBtn {
+    background:#c77dff;
+    color:white;
+    transition: transform 0.3s;
+}
+
+#noBtn { background:#ddd; }
+
+/* Hearts and confetti */
+.heart {
+    position:absolute;
+    color:#d291ff;
+    font-size:20px;
+    animation: floatUp 5s linear forwards;
+    z-index:3;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(0); opacity:1;}
+    to { transform: translateY(-100vh); opacity:0;}
+}
+
+.confetti {
+    position:absolute;
+    width:8px;
+    height:8px;
+    background:#9d4edd;
+    top:0;
+    animation: fall 4s linear forwards;
+    z-index:3;
+}
+
+/* Photo pop-up */
+#photoCheer {
+    position: relative;      /* instead of absolute */
+    display: block;          /* makes it a block element */
+    margin: 20px auto 0 auto; /* center it and give spacing above */
+    width: 150px;            /* smaller width so it fits nicely */
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    transform: scale(0);     /* hidden at first */
+    transition: transform 0.8s ease;
+    z-index: 1;              /* behind tulip card text */
+}
+
+/* Tulip messages card */
+#tulipCard {
+    position:absolute;
+    top:20%;
+    left:50%;
+    transform: translateX(-50%);
+    width:360px;
+    background:#7b2cbf;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    color:white;
+    z-index:2; /* above tulips */
+}
+</style>
+</head>
+<body>
+
+<div id="main"></div>
+<img id="photoCheer" src="" alt="Cheering Photo">
+
+<script>
+// Sweet personalized tulip messages dedicated to Pauleen
+const tulipMessages = [
+    "Pauleen, your laugh is my favorite sound in the world.",
+    "Every time I see you, my heart feels full of joy.",
+    "You make ordinary days feel extraordinary.",
+    "Thinking of you brightens even the darkest moments.",
+    "Your smile is a light I never want to lose.",
+    "Being with you makes me feel truly alive.",
+    "Every memory with you is my treasure.",
+    "I fall for you more with every word, every glance.",
+    "You are my happiness, my peace, and my dream.",
+    "I want to hold your hand through all of life’s adventures."
+];
+
+let tulipIndex = 0;
+let tulipClicks = 0;
+
+// Floating tulips background
+function createTulip(clickable=false){
+    const t = document.createElement("div");
+    t.className = "tulip";
+    if(clickable) t.classList.add("clickable"); // Highlight clickable tulips
+    t.innerHTML = "🌷";
+    t.style.left = Math.random()*window.innerWidth + "px";
+    t.style.top = Math.random()*window.innerHeight + "px";
+    if(clickable){
+        t.addEventListener("click", nextTulipMessage);
+    }
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 30000);
+}
+setInterval(()=>createTulip(),1000);
+
+// Envelope opening
+document.getElementById("main").innerHTML=`<div class="envelope" onclick="openCard()">Tap to open 💜</div>`;
+
+// Page 1
+function openCard(){
+    document.getElementById("main").innerHTML=`
+        <div class="card" id="card">
+            <h2>Pauleen, can I be your Valentine?</h2>
+            <button onclick="pageTwo()">Next</button>
+        </div>`;
+}
+
+// Page 2
+function pageTwo(){
+    document.getElementById("card").innerHTML=`
+        <h2>Please Pauleen...</h2>
+        <p>You mean a lot to me.<br>Will you be my Valentine?</p>
+        <button id="yesBtn" onclick="yesCelebration()">Yes</button>
+        <button id="noBtn" onclick="growYes()">No</button>`;
+}
+
+// Grow Yes button if No is pressed
+let yesSize=1;
+function growYes(){
+    yesSize+=0.3;
+    document.getElementById("yesBtn").style.transform = "scale("+yesSize+")";
+}
+
+// Hearts and confetti
+function createHeart(){
+    const heart=document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML="💜";
+    heart.style.left=Math.random()*window.innerWidth+"px";
+    heart.style.fontSize=(10+Math.random()*30)+"px";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),5000);
+}
+function createConfetti(){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*window.innerWidth+"px";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+}
+
+// Yes button celebration
+function yesCelebration(){
+    // Show photo cheering
+    const photo=document.getElementById("photoCheer");
+    photo.style.transform="translate(-50%, -50%) scale(1)";
+    for(let i=0;i<100;i++){
+        setTimeout(()=>{
+            createHeart();
+            createConfetti();
+        },i*50);
+    }
+    setTimeout(pageFour,2000);
+}
+
+// Page 4: Interactive Tulips
+function pageFour(){
+    tulipIndex=0;
+    tulipClicks=0;
+    document.getElementById("main").innerHTML=`
+        <div id="tulipCard">
+            <h2>Interactive Tulips 🌷</h2>
+            <p id="tulipMessage">${tulipMessages[0]}</p>
+            <p>Click on the glowing tulips to see all the messages!</p>
+        </div>`;
+    for(let i=0;i<10;i++) createTulip(true);
+}
+
+// Show next tulip message
+function nextTulipMessage(){
+    tulipIndex++;
+    tulipClicks++;
+    if(tulipIndex>=tulipMessages.length) tulipIndex = tulipMessages.length-1;
+    document.getElementById("tulipMessage").innerText = tulipMessages[tulipIndex];
+
+    if(tulipClicks >= 10){
+        // Show long heartfelt message after 10 tulips
+        document.getElementById("tulipMessage").innerText = 
+`Pauleen,
+
+From the very moment you told me on July 31, 2022, that you had a crush on me, my world shifted in the most beautiful way. Since then, your smile has lingered in my mind, your laughter echoes in my heart, and every memory of us feels like a treasure I never want to let go of.
+
+You turn ordinary days into magic, and even in silence, your presence fills my life with warmth and meaning. I want to walk beside you through every chapter of life to celebrate our joys, face our challenges, and hold each other through everything in between.
+
+You are my heart, my home, my everything, Pauleen. I love you without hesitation, without end, and I will love you for all the days to come.`;
+    }
+}
+</script>
+</body>
+</html>
